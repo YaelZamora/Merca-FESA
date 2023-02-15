@@ -3,6 +3,7 @@ import 'package:mercafesa/screens/login_screen.dart';
 
 import 'screens/new_product_screen.dart';
 import 'screens/product_detail.dart';
+import 'screens/register_screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -14,9 +15,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Material App',
-      home: ProductDetail(
-        nombre: 'Producto',
-      ),
+      home: RegisterScreen(),
     );
   }
 }
