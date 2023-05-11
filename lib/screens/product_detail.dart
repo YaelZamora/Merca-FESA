@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mercafesa/providers/product_form_provider.dart';
+import 'package:mercafesa/services/services.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetail extends StatelessWidget {
   const ProductDetail({super.key, required this.nombre});
@@ -7,7 +10,36 @@ class ProductDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final productsService = Provider.of<ProductsService>(context);
     final size = MediaQuery.of(context).size;
+
+    return ChangeNotifierProvider(
+      create: (_) => ProductFormProvider(productsService.selectedProduct),
+      child: _ProductDetailBody(
+        nombre: nombre,
+        size: size,
+        productsService: productsService,
+      ),
+    );
+  }
+}
+
+class _ProductDetailBody extends StatelessWidget {
+  const _ProductDetailBody({
+    super.key,
+    required this.nombre,
+    required this.size,
+    required this.productsService,
+  });
+
+  final String nombre;
+  final Size size;
+  final ProductsService productsService;
+
+  @override
+  Widget build(BuildContext context) {
+    final productForm = Provider.of<ProductFormProvider>(context);
+    final product = productForm.product;
 
     return Scaffold(
       appBar: AppBar(
@@ -27,35 +59,26 @@ class ProductDetail extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: size.width,
-                height: size.width * 0.8,
-                margin: const EdgeInsets.symmetric(vertical: 20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.grey,
-                ),
-                child: Icon(
-                  Icons.camera_alt,
-                  color: Colors.grey.shade300,
-                  size: size.width / 2,
-                ),
+              Imagen(
+                size: size,
+                url: productsService.selectedProduct.picture,
               ),
-              const Text(
-                'Nombre del producto',
-                style: TextStyle(
+              Text(
+                product.nombre,
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
                 ),
               ),
-              const Text(
-                'Precio: \$50',
-                style: TextStyle(
+              Text(
+                'Precio: \$${product.price}',
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
                 ),
               ),
-              const Text(
+              //TODO: Agregar para que se ponga la descripción de el producto
+              /*const Text(
                 'Descripción:',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -101,11 +124,45 @@ class ProductDetail extends StatelessWidget {
                     clipBehavior: Clip.hardEdge,
                   ),
                 ),
-              ),
+              ),*/
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class Imagen extends StatelessWidget {
+  const Imagen({
+    super.key,
+    required this.size,
+    this.url,
+  });
+
+  final Size size;
+  final String? url;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size.width,
+      height: size.width * 0.8,
+      margin: const EdgeInsets.symmetric(vertical: 20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Colors.grey,
+      ),
+      child: url == null
+          ? const Image(
+              image: AssetImage('assets/placeholder.png'),
+              fit: BoxFit.cover,
+            )
+          : FadeInImage(
+              placeholder: const AssetImage('assets/placeholder.png'),
+              image: NetworkImage(url!),
+              fit: BoxFit.cover,
+            ),
     );
   }
 }

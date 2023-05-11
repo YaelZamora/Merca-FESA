@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mercafesa/models/models.dart';
 import 'package:mercafesa/screens/product_detail.dart';
+import 'package:mercafesa/services/products_service.dart';
+import 'package:provider/provider.dart';
 
 class ProductWidget extends StatelessWidget {
   const ProductWidget({
@@ -8,24 +11,35 @@ class ProductWidget extends StatelessWidget {
     required this.nombre,
     required this.precio,
     required this.isAvailable,
+    required this.product,
+    required this.index,
   });
 
   final String imagen;
   final String nombre;
   final int precio;
   final bool isAvailable;
+  final Product product;
+
+  final int index;
 
   @override
   Widget build(BuildContext context) {
+    final productsService = Provider.of<ProductsService>(context);
+
     return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) => ProductDetail(
-            nombre: nombre,
+      onTap: () {
+        productsService.selectedProduct =
+            productsService.products[index].copy();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => ProductDetail(
+              nombre: product.nombre,
+            ),
           ),
-        ),
-      ),
+        );
+      },
       child: Container(
         width: 150,
         height: 150,
@@ -40,16 +54,23 @@ class ProductWidget extends StatelessWidget {
             Container(
               width: 150,
               height: 100,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(imagen),
-                  fit: BoxFit.cover,
-                ),
-              ),
+              child: product.picture == null
+                  ? const Image(
+                      image: AssetImage('assets/placeholder.png'),
+                    )
+                  : FadeInImage(
+                      placeholder: const AssetImage('assets/placeholder.png'),
+                      image: NetworkImage(
+                        product.picture.toString(),
+                      ),
+                      fit: BoxFit.cover,
+                    ),
             ),
             Positioned(
               right: 0,
-              child: (isAvailable == true) ? const SizedBox() : const Agotado(),
+              child: (product.available == true)
+                  ? const SizedBox()
+                  : const Agotado(),
             ),
             Positioned(
               bottom: 10,
@@ -59,7 +80,7 @@ class ProductWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '\$' + precio.toString() + ' ' + nombre,
+                    '\$' + product.price.toString() + ' ' + product.nombre,
                     overflow: TextOverflow.ellipsis,
                   ),
                   IconButton(

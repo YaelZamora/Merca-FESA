@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:mercafesa/screens/product_detail.dart';
+import 'package:mercafesa/services/products_service.dart';
 import 'package:mercafesa/widgets/product_widget.dart';
+import 'package:provider/provider.dart';
 
 class HomeTab extends StatelessWidget {
   const HomeTab({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final productService = Provider.of<ProductsService>(context);
     final size = MediaQuery.of(context).size;
 
     return SizedBox(
@@ -25,14 +29,15 @@ class HomeTab extends StatelessWidget {
               width: size.width,
               height: 170,
               child: ListView.builder(
-                itemCount: 20,
+                itemCount: productService.products.length,
                 scrollDirection: Axis.horizontal,
-                itemBuilder: (BuildContext context, int index) =>
-                    const ProductWidget(
+                itemBuilder: (BuildContext context, int index) => ProductWidget(
+                  product: productService.products.elementAt(index),
                   imagen: 'https://picsum.photos/100',
                   nombre: 'Nombre',
                   precio: 50,
                   isAvailable: false,
+                  index: index,
                 ),
               ),
             ),
@@ -47,14 +52,15 @@ class HomeTab extends StatelessWidget {
               width: size.width,
               height: 170,
               child: ListView.builder(
-                itemCount: 20,
+                itemCount: productService.products.length,
                 scrollDirection: Axis.horizontal,
-                itemBuilder: (BuildContext context, int index) =>
-                    const ProductWidget(
+                itemBuilder: (BuildContext context, int index) => ProductWidget(
+                  product: productService.products.elementAt(index),
                   imagen: 'https://picsum.photos/100',
                   nombre: 'Nombre',
                   precio: 50,
                   isAvailable: false,
+                  index: index,
                 ),
               ),
             ),
@@ -69,14 +75,15 @@ class HomeTab extends StatelessWidget {
               width: size.width,
               height: 170,
               child: ListView.builder(
-                itemCount: 20,
+                itemCount: productService.products.length,
                 scrollDirection: Axis.horizontal,
-                itemBuilder: (BuildContext context, int index) =>
-                    const ProductWidget(
+                itemBuilder: (BuildContext context, int index) => ProductWidget(
+                  product: productService.products.elementAt(index),
                   imagen: 'https://picsum.photos/100',
                   nombre: 'Nombre',
                   precio: 50,
                   isAvailable: false,
+                  index: index,
                 ),
               ),
             ),

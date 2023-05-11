@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mercafesa/models/models.dart';
+import 'package:mercafesa/screens/carrito_screen.dart';
+import 'package:mercafesa/screens/new_product_screen.dart';
+import 'package:mercafesa/services/services.dart';
 import 'package:mercafesa/tabs/tabs.dart';
+import 'package:provider/provider.dart';
+
+enum SampleItem { itemOne, itemTwo, itemThree }
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,8 +22,12 @@ class _HomeScreenState extends State<HomeScreen> {
     const RecentTab(),
   ];
 
+  SampleItem? selectedMenu;
+
   @override
   Widget build(BuildContext context) {
+    final productsService = Provider.of<ProductsService>(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.red,
@@ -29,12 +40,34 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.more_vert,
-            ),
-          ),
+          PopupMenuButton<SampleItem>(
+            initialValue: selectedMenu,
+            onSelected: (SampleItem item) {
+              setState(() {
+                selectedMenu = item;
+              });
+              productsService.selectedProduct = new Product(
+                available: true,
+                cantidad: 1,
+                nombre: '',
+                price: 0,
+              );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => const NewProductScreen(),
+                ),
+              );
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<SampleItem>>[
+              const PopupMenuItem(
+                value: SampleItem.itemOne,
+                child: Text(
+                  'Publicar artículo',
+                ),
+              ),
+            ],
+          )
         ],
       ),
       body: _index[_currentIndex],
@@ -63,8 +96,33 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.red,
         child: const Icon(Icons.shopping_cart),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => CarritoScreen(
+                product: productsService.products.elementAt(0),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 }
+ /*
+ 
+
+        productsService.selectedProduct = new Product(
+            available: true,
+            cantidad: 1,
+            nombre: '',
+            price: 0,
+          );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => const NewProductScreen(),
+            ),
+          );
+ */
