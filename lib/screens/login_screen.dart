@@ -89,12 +89,9 @@ class LoginScreen extends StatelessWidget {
                       child: MaterialButton(
                         minWidth: 250,
                         height: 60,
-                        onPressed: () => Navigator.push(
+                        onPressed: () => Navigator.popAndPushNamed(
                           context,
-                          MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                const HomeScreen(),
-                          ),
+                          'home',
                         ),
                         child: const Text(
                           'Iniciar Sesión',
